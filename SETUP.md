@@ -14,11 +14,18 @@
 
 ### 2. データベーススキーマの構築
 
-1. Supabaseダッシュボードの左サイドバーから「SQL Editor」を選択
-2. 「New query」をクリック
-3. `/workspaces/tool-park/supabase/schema.sql` の内容をコピー＆ペースト
-4. 「Run」ボタンをクリックして実行
-5. 成功メッセージが表示されることを確認
+**⚠️ 重要: ファイルパスではなく、ファイルの中身をコピーしてください！**
+
+1. Supabaseダッシュボードの左サイドバーから「**SQL Editor**」を選択
+2. 「**New query**」をクリック
+3. VS Codeで `supabase/schema.sql` ファイルを開く
+4. ファイルの**中身を全てコピー**（Ctrl+A → Ctrl+C）
+5. SupabaseのSQL Editorに**貼り付け**（Ctrl+V）
+6. 「**Run**」ボタン（緑色の再生ボタン）をクリックして実行
+7. ✅ 「Success. No rows returned」メッセージが表示されればOK！
+
+> ❌ `'/workspaces/tool-park/supabase/schema.sql'` とファイルパスを入力しないでください  
+> ✅ ファイルの中身（SQLコード）をコピー&ペーストしてください
 
 ### 3. 環境変数の設定
 
