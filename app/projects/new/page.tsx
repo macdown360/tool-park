@@ -10,6 +10,7 @@ import Navbar from '@/components/Navbar'
 const CATEGORY_GROUPS = [
   {
     label: 'コア業務',
+    icon: '💼',
     options: [
       '営業・販売管理',
       '顧客管理（CRM）',
@@ -24,6 +25,7 @@ const CATEGORY_GROUPS = [
   },
   {
     label: 'マーケティング・コミュニケーション',
+    icon: '📢',
     options: [
       'マーケティング支援',
       'SNS管理',
@@ -34,6 +36,7 @@ const CATEGORY_GROUPS = [
   },
   {
     label: 'コンテンツ制作',
+    icon: '🎨',
     options: [
       '文書作成・編集',
       'デザイン・画像編集',
@@ -44,6 +47,7 @@ const CATEGORY_GROUPS = [
   },
   {
     label: 'データ・分析',
+    icon: '📊',
     options: [
       'データ分析・可視化',
       'レポート作成',
@@ -54,6 +58,7 @@ const CATEGORY_GROUPS = [
   },
   {
     label: '学習・教育',
+    icon: '📚',
     options: [
       'eラーニング',
       'クイズ・テスト作成',
@@ -63,6 +68,7 @@ const CATEGORY_GROUPS = [
   },
   {
     label: 'その他',
+    icon: '🔧',
     options: [
       '自動化・効率化ツール',
       'API連携ツール',
@@ -73,6 +79,44 @@ const CATEGORY_GROUPS = [
   },
 ]
 
+const TAG_GROUPS = [
+  {
+    label: '利用形態タグ',
+    icon: '🏷️',
+    groups: [
+      {
+        label: '料金',
+        options: ['無料', '有料', 'フリーミアム'],
+      },
+      {
+        label: '利用規模',
+        options: ['個人向け', 'チーム向け', '企業向け'],
+      },
+      {
+        label: 'アクセス',
+        options: ['ブラウザ完結', 'アカウント不要', 'モバイル対応', 'インストール不要', 'PWA対応', 'オフライン対応'],
+      },
+    ],
+  },
+  {
+    label: '業界・用途タグ',
+    icon: '🏢',
+    groups: [
+      {
+        label: '業種',
+        options: ['小売・EC', '不動産', '飲食店', '医療・ヘルスケア', '教育', '製造業', '士業', '建設・工事', '美容・サロン', '運送・物流'],
+      },
+      {
+        label: '用途',
+        options: ['イベント運営', 'カスタマーサポート', '業務効率化', 'データ管理', '資料作成', 'コスト削減', '初心者向け', 'AI活用'],
+      },
+    ],
+  },
+]
+
+const TITLE_MAX = 80
+const DESC_MAX = 2000
+
 export default function NewProjectPage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -81,23 +125,36 @@ export default function NewProjectPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [isDragActive, setIsDragActive] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
-  const [tags, setTags] = useState('')
+  const [tags, setTags] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [openCatGroups, setOpenCatGroups] = useState<Set<string>>(new Set())
+  const [openTagGroups, setOpenTagGroups] = useState<Set<string>>(new Set())
   const fileInputRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
   const supabase = createClient()
 
+
+  const toggleAccordion = (set: Set<string>, setFn: React.Dispatch<React.SetStateAction<Set<string>>>, key: string) => {
+    setFn((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
+
   const handleFileChange = (file: File | null) => {
     if (!file) return
 
-    // ファイルサイズをチェック（10MB以下）
     if (file.size > 10 * 1024 * 1024) {
       setError('画像ファイルは10MB以下にしてください')
       return
     }
 
-    // ファイルタイプをチェック
     if (!file.type.startsWith('image/')) {
       setError('画像ファイルを選択してください')
       return
@@ -106,7 +163,6 @@ export default function NewProjectPage() {
     setImageFile(file)
     setError(null)
 
-    // プレビューを作成
     const reader = new FileReader()
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string)
@@ -148,6 +204,12 @@ export default function NewProjectPage() {
     )
   }
 
+  const toggleTag = (value: string) => {
+    setTags((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    )
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -161,12 +223,11 @@ export default function NewProjectPage() {
       }
 
       const { data: { user } } = await supabase.auth.getUser()
-      
+
       if (!user) {
         throw new Error('ログインが必要です')
       }
 
-      // プロフィールが存在するか確認し、なければ作成
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
@@ -174,7 +235,6 @@ export default function NewProjectPage() {
         .single()
 
       if (!profile) {
-        // プロフィールが存在しない場合は作成
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
@@ -192,21 +252,19 @@ export default function NewProjectPage() {
 
       let uploadedImageUrl: string | null = null
 
-      // 画像をアップロード
       if (imageFile) {
         try {
           const fileExt = imageFile.name.split('.').pop()
           const fileName = `${user.id}-${Date.now()}.${fileExt}`
           const filePath = `projects/${fileName}`
 
-          const { error: uploadError, data } = await supabase.storage
+          const { error: uploadError } = await supabase.storage
             .from('project-images')
             .upload(filePath, imageFile, { upsert: false })
 
           if (uploadError) {
             console.error('Upload error details:', uploadError)
-            
-            // バケットが見つからない場合の特別なエラーメッセージ
+
             if (uploadError.message === 'Bucket not found') {
               throw new Error(
                 'Supabase Storage の設定がまだ完了していません。\n\n' +
@@ -215,7 +273,6 @@ export default function NewProjectPage() {
               )
             }
 
-            // RLS ポリシーエラーの場合
             if (uploadError.message.includes('row-level security policy')) {
               throw new Error(
                 'Supabase Storage のセキュリティポリシーが正しく設定されていません。\n\n' +
@@ -224,11 +281,10 @@ export default function NewProjectPage() {
                 'CREATE ポリシーと SELECT ポリシーを作成してください。'
               )
             }
-            
+
             throw new Error(`画像アップロード失敗: ${uploadError.message || '不明なエラー'}`)
           }
 
-          // 公開URLを取得
           const { data: { publicUrl } } = supabase.storage
             .from('project-images')
             .getPublicUrl(filePath)
@@ -240,11 +296,6 @@ export default function NewProjectPage() {
         }
       }
 
-      const tagsArray = tags
-        .split(',')
-        .map(tag => tag.trim())
-        .filter(tag => tag.length > 0)
-
       const { data, error } = await supabase
         .from('projects')
         .insert({
@@ -254,7 +305,7 @@ export default function NewProjectPage() {
           url,
           image_url: uploadedImageUrl || null,
           categories,
-          tags: tagsArray,
+          tags,
         })
         .select()
         .single()
@@ -273,79 +324,123 @@ export default function NewProjectPage() {
   return (
     <div className="min-h-screen bg-amber-50">
       <Navbar />
-      
-      <div className="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link href="/" className="text-green-600 hover:text-green-700 flex items-center">
+
+      <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* ヘッダー */}
+        <div className="mb-6">
+          <Link href="/" className="text-green-600 hover:text-green-700 inline-flex items-center text-sm">
             ← 戻る
           </Link>
-        </div>
-
-        <div className="bg-white shadow rounded-lg p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-3">
             🌱 新しいアプリの種をまく
           </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            あなたのアプリを Appli Farm に登録しましょう
+          </p>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {error}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          {/* ==================== セクション1: 基本情報 ==================== */}
+          <section className="bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold">1</span>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">基本情報</h2>
+                  <p className="text-xs text-gray-500">アプリの名前・説明・URLを入力してください</p>
+                </div>
               </div>
-            )}
-
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                タイトル <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="title"
-                required
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                placeholder="例: 便利なTodoアプリ"
-              />
             </div>
+            <div className="p-6 space-y-5">
+              {/* タイトル */}
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                  アプリ名 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  required
+                  maxLength={TITLE_MAX}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                  placeholder="例: 便利なTodoアプリ"
+                />
+                <div className="flex justify-between mt-1">
+                  <p className="text-xs text-gray-400">わかりやすい名前をつけましょう</p>
+                  <p className={`text-xs ${title.length > TITLE_MAX * 0.9 ? 'text-amber-500' : 'text-gray-400'}`}>
+                    {title.length}/{TITLE_MAX}
+                  </p>
+                </div>
+              </div>
 
-            <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-                説明 <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                id="description"
-                required
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                rows={5}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                placeholder="アプリの説明、使用した技術、特徴などを記載してください"
-              />
+              {/* 説明 */}
+              <div>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                  説明 <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  id="description"
+                  required
+                  maxLength={DESC_MAX}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors resize-y"
+                  placeholder="どんなアプリですか？特徴や使い方を書いてみましょう"
+                />
+                <div className="flex justify-between mt-1">
+                  <p className="text-xs text-gray-400">特徴、使い方、技術スタックなどを記載</p>
+                  <p className={`text-xs ${description.length > DESC_MAX * 0.9 ? 'text-amber-500' : 'text-gray-400'}`}>
+                    {description.length}/{DESC_MAX}
+                  </p>
+                </div>
+              </div>
+
+              {/* URL */}
+              <div>
+                <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">
+                  URL <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔗</span>
+                  <input
+                    type="url"
+                    id="url"
+                    required
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                    placeholder="https://example.com"
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-1">アプリのURLまたはリポジトリのURL</p>
+              </div>
             </div>
+          </section>
 
-            <div>
-              <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-2">
-                URL <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="url"
-                id="url"
-                required
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                placeholder="https://example.com"
-              />
+          {/* ==================== セクション2: サムネイル画像 ==================== */}
+          <section className="bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold">2</span>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">サムネイル画像</h2>
+                  <p className="text-xs text-gray-500">アプリを視覚的にアピールしましょう（任意）</p>
+                </div>
+              </div>
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                サムネイル画像（オプション）
-              </label>
-              
-              {/* 画像プレビュー */}
+            <div className="p-6">
               {imagePreview && (
-                <div className="mb-4 relative w-full h-48 rounded-md overflow-hidden bg-gray-100">
+                <div className="mb-4 relative w-full h-48 rounded-lg overflow-hidden bg-gray-100">
                   <Image
                     src={imagePreview}
                     alt="Preview"
@@ -361,23 +456,22 @@ export default function NewProjectPage() {
                         fileInputRef.current.value = ''
                       }
                     }}
-                    className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm font-medium"
+                    className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 text-sm font-medium shadow"
                   >
                     削除
                   </button>
                 </div>
               )}
 
-              {/* ドラッグアンドドロップエリア */}
               <div
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                className={`relative border-2 border-dashed rounded-md p-8 text-center cursor-pointer transition-colors ${
+                className={`relative border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
                   isDragActive
                     ? 'border-green-500 bg-green-50'
-                    : 'border-gray-300 bg-gray-50 hover:border-green-500 hover:bg-green-50'
+                    : 'border-gray-300 bg-gray-50 hover:border-green-400 hover:bg-green-50'
                 }`}
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -389,87 +483,238 @@ export default function NewProjectPage() {
                   className="hidden"
                   aria-label="画像ファイルを選択"
                 />
-                <div className="text-4xl mb-2">🌱</div>
-                <p className="text-gray-700 font-medium mb-1">
+                <div className="text-3xl mb-1">📷</div>
+                <p className="text-gray-700 font-medium text-sm">
                   ファイルをドラッグ&ドロップ
                 </p>
-                <p className="text-gray-500 text-sm mb-3">
-                  またはクリックして選択してください
+                <p className="text-gray-500 text-xs mt-1">
+                  またはクリックして選択
                 </p>
-                <p className="text-gray-400 text-xs">
-                  対応形式: JPG, PNG, GIF, WebP（最大10MB）
+                <p className="text-gray-400 text-xs mt-2">
+                  JPG, PNG, GIF, WebP（最大10MB）
                 </p>
               </div>
             </div>
+          </section>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                カテゴリ <span className="text-red-500">*</span>
-              </label>
-              <div className="space-y-5">
-                {CATEGORY_GROUPS.map((group) => (
-                  <div key={group.label} className="space-y-2">
-                    <p className="text-sm font-semibold text-gray-700">
-                      {group.label}
-                    </p>
-                    <div className="grid sm:grid-cols-2 gap-2">
-                      {group.options.map((option) => (
-                        <label
-                          key={option}
-                          className="flex items-center space-x-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 hover:border-green-400 hover:bg-green-50"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={categories.includes(option)}
-                            onChange={() => toggleCategory(option)}
-                            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
-                          />
-                          <span className="text-sm text-gray-700">{option}</span>
-                        </label>
-                      ))}
-                    </div>
+          {/* ==================== セクション3: カテゴリ ==================== */}
+          <section className="bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-green-600 text-white text-sm font-bold">3</span>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">カテゴリ <span className="text-red-500 text-sm">*</span></h2>
+                  <p className="text-xs text-gray-500">アプリの分類を選択してください（複数選択可）</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              {/* 選択中のカテゴリバッジ */}
+              {categories.length > 0 && (
+                <div className="mb-4 pb-4 border-b border-gray-100">
+                  <p className="text-xs font-medium text-gray-500 mb-2">選択中（{categories.length}件）</p>
+                  <div className="flex flex-wrap gap-2">
+                    {categories.map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => toggleCategory(cat)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium hover:bg-red-100 hover:text-red-700 transition-colors"
+                      >
+                        {cat}
+                        <span className="text-green-500 hover:text-red-500">✕</span>
+                      </button>
+                    ))}
                   </div>
-                ))}
+                </div>
+              )}
+
+              {/* アコーディオン形式のカテゴリグループ */}
+              <div className="space-y-2">
+                {CATEGORY_GROUPS.map((group) => {
+                  const isOpen = openCatGroups.has(group.label)
+                  const selectedCount = group.options.filter((o) => categories.includes(o)).length
+                  return (
+                    <div key={group.label} className="rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleAccordion(openCatGroups, setOpenCatGroups, group.label)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{group.icon}</span>
+                          <span className="text-sm font-semibold text-gray-700">{group.label}</span>
+                          {selectedCount > 0 && (
+                            <span className="ml-1 bg-green-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                              {selectedCount}
+                            </span>
+                          )}
+                        </span>
+                        <span className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div className="p-3 bg-white">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                            {group.options.map((option) => {
+                              const checked = categories.includes(option)
+                              return (
+                                <label
+                                  key={option}
+                                  className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-all text-sm ${
+                                    checked
+                                      ? 'border-green-400 bg-green-50 text-green-800 font-medium'
+                                      : 'border-gray-200 bg-white text-gray-700 hover:border-green-300 hover:bg-green-50/50'
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => toggleCategory(option)}
+                                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                                  />
+                                  <span>{option}</span>
+                                </label>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
-              <p className="mt-2 text-sm text-gray-500">
-                複数選択が可能です
-              </p>
-            </div>
 
-            <div>
-              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-                タグ（オプション）
-              </label>
-              <input
-                type="text"
-                id="tags"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-                placeholder="React, TypeScript, Tailwind (カンマ区切り)"
-              />
-              <p className="mt-1 text-sm text-gray-500">
-                タグをカンマ区切りで入力してください（例: React, TypeScript, Tailwind）
-              </p>
+              {categories.length === 0 && (
+                <p className="mt-3 text-xs text-amber-600 flex items-center gap-1">
+                  <span>⚠️</span> 1つ以上のカテゴリを選択してください
+                </p>
+              )}
             </div>
+          </section>
 
-            <div className="flex justify-end space-x-4 pt-4">
-              <Link
-                href="/"
-                className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-              >
-                キャンセル
-              </Link>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? '植えています...' : '🌱 種をまく'}
-              </button>
+          {/* ==================== セクション4: タグ ==================== */}
+          <section className="bg-white shadow-sm rounded-lg border border-gray-100 overflow-hidden">
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-300 text-white text-sm font-bold">4</span>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">タグ</h2>
+                  <p className="text-xs text-gray-500">利用条件や対象業界を指定できます（任意・複数選択可）</p>
+                </div>
+              </div>
             </div>
-          </form>
-        </div>
+            <div className="p-6">
+              {/* 選択中のタグバッジ */}
+              {tags.length > 0 && (
+                <div className="mb-4 pb-4 border-b border-gray-100">
+                  <p className="text-xs font-medium text-gray-500 mb-2">選択中（{tags.length}件）</p>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => toggleTag(tag)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium hover:bg-red-100 hover:text-red-700 transition-colors"
+                      >
+                        {tag}
+                        <span className="text-blue-500 hover:text-red-500">✕</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* アコーディオン形式のタググループ */}
+              <div className="space-y-2">
+                {TAG_GROUPS.map((tagGroup) => {
+                  const isOpen = openTagGroups.has(tagGroup.label)
+                  const allOptions = tagGroup.groups.flatMap((g) => g.options)
+                  const selectedCount = allOptions.filter((o) => tags.includes(o)).length
+                  return (
+                    <div key={tagGroup.label} className="rounded-lg border border-gray-200 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => toggleAccordion(openTagGroups, setOpenTagGroups, tagGroup.label)}
+                        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>{tagGroup.icon}</span>
+                          <span className="text-sm font-semibold text-gray-700">{tagGroup.label}</span>
+                          {selectedCount > 0 && (
+                            <span className="ml-1 bg-blue-600 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                              {selectedCount}
+                            </span>
+                          )}
+                        </span>
+                        <span className={`text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+                          ▼
+                        </span>
+                      </button>
+                      {isOpen && (
+                        <div className="p-3 bg-white space-y-3">
+                          {tagGroup.groups.map((group) => (
+                            <div key={group.label}>
+                              <p className="text-xs font-semibold text-gray-500 mb-2 pl-1">{group.label}</p>
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                {group.options.map((option) => {
+                                  const checked = tags.includes(option)
+                                  return (
+                                    <label
+                                      key={option}
+                                      className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-all text-sm ${
+                                        checked
+                                          ? 'border-blue-400 bg-blue-50 text-blue-800 font-medium'
+                                          : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50/50'
+                                      }`}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={() => toggleTag(option)}
+                                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                      />
+                                      <span>{option}</span>
+                                    </label>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* ==================== 送信ボタン ==================== */}
+          <div className="bg-white shadow-sm rounded-lg border border-gray-100 p-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-gray-500">
+                <span className="text-red-500">*</span> は必須項目です
+              </p>
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <Link
+                  href="/"
+                  className="flex-1 sm:flex-none text-center px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium"
+                >
+                  キャンセル
+                </Link>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 sm:flex-none px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold shadow-sm"
+                >
+                  {loading ? '植えています...' : '🌱 種をまく'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   )

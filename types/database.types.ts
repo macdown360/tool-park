@@ -17,6 +17,10 @@ export interface Database {
           avatar_url: string | null
           bio: string | null
           website: string | null
+          github_url: string | null
+          x_url: string | null
+          linkedin_url: string | null
+          note_url: string | null
           created_at: string
           updated_at: string
         }
@@ -27,6 +31,10 @@ export interface Database {
           avatar_url?: string | null
           bio?: string | null
           website?: string | null
+          github_url?: string | null
+          x_url?: string | null
+          linkedin_url?: string | null
+          note_url?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -37,6 +45,10 @@ export interface Database {
           avatar_url?: string | null
           bio?: string | null
           website?: string | null
+          github_url?: string | null
+          x_url?: string | null
+          linkedin_url?: string | null
+          note_url?: string | null
           created_at?: string
           updated_at?: string
         }

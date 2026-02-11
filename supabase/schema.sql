@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS profiles (
     avatar_url TEXT,
     bio TEXT,
     website TEXT,
+    github_url TEXT,
+    x_url TEXT,
+    linkedin_url TEXT,
+    note_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
