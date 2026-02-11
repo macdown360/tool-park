@@ -12,6 +12,7 @@ interface ProjectCardProps {
     tags: string[]
     likes_count: number
     created_at: string
+    updated_at: string
     profiles?: {
       full_name: string | null
       avatar_url: string | null
@@ -65,8 +66,15 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </h3>
 
           {/* 説明 */}
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
+          <p className="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow">
             {project.description}
+          </p>
+
+          <p className="text-xs text-gray-500 mb-1">
+            種をまいた日: {new Date(project.created_at).toLocaleDateString('ja-JP')}
+          </p>
+          <p className="text-xs text-gray-500 mb-4">
+            最終更新日: {new Date(project.updated_at).toLocaleDateString('ja-JP')}
           </p>
 
           {/* タグ */}

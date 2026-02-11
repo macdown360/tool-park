@@ -19,6 +19,7 @@ interface Project {
   tags: string[]
   likes_count: number
   created_at: string
+  updated_at: string
   profiles?: {
     full_name: string | null
     avatar_url: string | null
@@ -154,6 +155,32 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
     }
   }
 
+  const handleDelete = async () => {
+    if (!user) {
+      router.push('/auth/login')
+      return
+    }
+
+    if (!project) return
+
+    const confirmed = window.confirm('このプロジェクトを削除しますか？この操作は取り消せません。')
+    if (!confirmed) return
+
+    const { error } = await supabase
+      .from('projects')
+      .delete()
+      .eq('id', project.id)
+
+    if (error) {
+      console.error('プロジェクトの削除に失敗しました:', error)
+      window.alert('削除に失敗しました。もう一度お試しください。')
+      return
+    }
+
+    router.push('/projects')
+    router.refresh()
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-amber-50">
@@ -168,6 +195,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   if (!project) {
     return null
   }
+
+  const isOwner = user?.id === project.user_id
 
   return (
     <div className="min-h-screen bg-amber-50">
@@ -212,6 +241,24 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               {project.title}
             </h1>
 
+            {isOwner && (
+              <div className="flex flex-wrap gap-3 mb-6">
+                <Link
+                  href={`/projects/${project.id}/edit`}
+                  className="px-4 py-2 border border-green-300 text-green-700 rounded-md hover:bg-green-50"
+                >
+                  編集する
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="px-4 py-2 border border-red-300 text-red-600 rounded-md hover:bg-red-50"
+                >
+                  削除する
+                </button>
+              </div>
+            )}
+
             {/* 作成者情報 */}
             <div className="flex items-center space-x-3 mb-6">
               {project.profiles?.avatar_url ? (
@@ -232,7 +279,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   {project.profiles?.full_name || '匿名ユーザー'}
                 </p>
                 <p className="text-sm text-gray-500">
-                  {new Date(project.created_at).toLocaleDateString('ja-JP')}
+                  種をまいた日: {new Date(project.created_at).toLocaleDateString('ja-JP')}
+                </p>
+                <p className="text-sm text-gray-500">
+                  最終更新日: {new Date(project.updated_at).toLocaleDateString('ja-JP')}
                 </p>
               </div>
             </div>

@@ -33,7 +33,7 @@ export default async function Home() {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <h1 className="text-5xl font-bold mb-6">
-            あなたのアプリを<br />みんなで育てよう 🌾
+            アプリを作って、公開して、育てる
           </h1>
           <p className="text-xl mb-8 text-green-100">
             自分が作ったWEBサイトやアプリを公開して、利用者からのフィードバックを受けながら一緒に育てていくプラットフォーム
@@ -126,7 +126,7 @@ export default async function Home() {
       <section className="py-16 bg-gradient-to-r from-green-600 to-emerald-700 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-4">
-            🌾 あなたのアプリの種を植えよう
+            あなたのアイデアが世界を変える。アプリの種を育てよう！
           </h2>
           <p className="text-xl mb-8 text-green-100">
             無料で始められます。今すぐ登録して、みんなと一緒にアプリを育てましょう！
