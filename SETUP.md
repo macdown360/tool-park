@@ -29,48 +29,34 @@
 
 ### 3. Supabase Storage のセットアップ
 
-画像アップロード機能を使用するために、Storageバケットを正しく設定する必要があります。
+**必須: 画像アップロード機能に必要です**
 
-#### ステップ 1: バケットの作成
+#### ステップ 1: バケット作成
 
-1. Supabaseダッシュボードの左サイドバーから「**Storage**」を選択
-2. 「**Create a new bucket**」ボタンをクリック
-3. バケット名に `project-images` と入力
-4. 「**Public bucket**」にチェックを入れる
-5. 「**Create bucket**」をクリック
+1. [Supabaseダッシュボード](https://app.supabase.com)にログイン
+2. プロジェクトを選択
+3. 左メニューの「**Storage**」をクリック
+4. 「**Create a new bucket**」をクリック
+5. 名前に `project-images` と入力
+6. 「**Public bucket**」✅ にチェック
+7. 「**Create bucket**」をクリック
 
-#### ステップ 2: RLS ポリシーの設定（重要！）
+#### ステップ 2: セキュリティ設定
 
-1. 作成した `project-images` バケットをクリックして選択
-2. 上部の「**Policies**」タブをクリック
-3. 「**New policy**」をクリック
+バケット作成後、セキュリティポリシーを設定します：
+
+1. 作成した `project-images` バケットを選択
+2. 「**Policies**」タブをクリック
+3. 「**New Policy**」をクリック
 4. 「**For authenticated users**」を選択
+5. ポリシー作成ウィザードで「**CREATE**」を選択
+6. デフォルト値のまま「**Review**」→「**Create policy**」をクリック
 
-**以下の2つのポリシーを作成します：**
+✅ これでバケットのセットアップが完了しました
 
-**ポリシー 1: ユーザー自身のファイルをアップロード可能にする**
-- Template: `CREATE` を選択
-- Target role: `authenticated`
-- Definition に以下を入力:
-  ```
-  (uid::text = auth.uid()::text) OR (auth.uid() IS NOT NULL)
-  ```
-- Click `Review` then `Save policy`
-
-**ポリシー 2: 全員がファイルを読み取り可能にする**
-- Template: `SELECT` を選択
-- Target role: `anon`
-- Definition に以下を入力:
-  ```
-  true
-  ```
-- Click `Review` then `Save policy`
-
-✅ これでプロジェクト画像のアップロード機能が使用できます
-
-**トラブルシューティング:**
-- アップロード時に「未認可」エラーが出る → ポリシー 1 を確認してください
-- 画像が表示されない → ポリシー 2 を確認してください
+**確認方法:**
+- Supabaseダッシュボード → Storage → `project-images` バケットが表示されている
+- ブラウザで `https://your-project.supabase.co/storage/v1/object/public/project-images/` にアクセスして、404ページが表示されれば正常です
 
 ### 4. 環境変数の設定
 

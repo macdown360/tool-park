@@ -137,6 +137,16 @@ export default function NewProjectPage() {
 
           if (uploadError) {
             console.error('Upload error details:', uploadError)
+            
+            // バケットが見つからない場合の特別なエラーメッセージ
+            if (uploadError.message === 'Bucket not found') {
+              throw new Error(
+                'Supabase Storage の設定がまだ完了していません。\n\n' +
+                'SETUP.md の「3. Supabase Storage のセットアップ」を参照して、\n' +
+                '「project-images」という名前のバケットを作成してください。'
+              )
+            }
+            
             throw new Error(`画像アップロード失敗: ${uploadError.message || '不明なエラー'}`)
           }
 
