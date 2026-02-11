@@ -114,7 +114,6 @@ export default function ProfilePage() {
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">
                   {profile?.full_name || '名前未設定'}
                 </h1>
-                <p className="text-gray-600 mb-2">{user?.email}</p>
                 {profile?.bio && (
                   <p className="text-gray-700 mt-2">{profile.bio}</p>
                 )}
@@ -140,7 +139,7 @@ export default function ProfilePage() {
         </div>
 
         {/* 統計情報 */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div className="bg-white shadow rounded-lg p-6 text-center">
             <p className="text-3xl font-bold text-green-600">{projects.length}</p>
             <p className="text-gray-600 mt-2">育てたアプリ</p>
@@ -150,12 +149,6 @@ export default function ProfilePage() {
               {projects.reduce((sum, p) => sum + (p.likes_count || 0), 0)}
             </p>
             <p className="text-gray-600 mt-2">もらった水やり（いいね）</p>
-          </div>
-          <div className="bg-white shadow rounded-lg p-6 text-center">
-            <p className="text-3xl font-bold text-green-600">
-              {profile?.created_at ? new Date(profile.created_at).getFullYear() : new Date().getFullYear()}
-            </p>
-            <p className="text-gray-600 mt-2">登録年</p>
           </div>
         </div>
 
