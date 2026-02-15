@@ -4,6 +4,7 @@ import Image from 'next/image'
 interface ProjectCardProps {
   project: {
     id: string
+    user_id: string
     title: string
     description: string
     url: string
@@ -98,7 +99,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
           {/* フッター：作成者といいね数 */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-            <div className="flex items-center space-x-2 min-w-0">
+            <Link 
+              href={`/profile/${project.user_id}`}
+              className="flex items-center space-x-2 min-w-0 hover:opacity-70 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
               {project.profiles?.avatar_url ? (
                 <Image
                   src={project.profiles.avatar_url}
@@ -115,7 +120,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
               <span className="text-xs md:text-sm text-gray-600 truncate">
                 {project.profiles?.full_name || '匿名ユーザー'}
               </span>
-            </div>
+            </Link>
             <div className="flex items-center space-x-1 text-gray-600 flex-shrink-0 ml-2">
               <span>❤️</span>
               <span className="text-xs md:text-sm">{project.likes_count}</span>

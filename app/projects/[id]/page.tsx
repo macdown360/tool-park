@@ -378,7 +378,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
             )}
 
             {/* 作成者情報 */}
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+            <Link 
+              href={`/profile/${project.user_id}`}
+              className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6 hover:opacity-70 transition-opacity w-fit"
+            >
               {project.profiles?.avatar_url ? (
                 <Image
                   src={project.profiles.avatar_url}
@@ -403,7 +406,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   最終更新日: {new Date(project.updated_at).toLocaleDateString('ja-JP')}
                 </p>
               </div>
-            </div>
+            </Link>
 
             {/* 説明 */}
             <div className="prose max-w-none mb-6">
@@ -549,7 +552,10 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                   comments.map((comment) => (
                     <div key={comment.id} className="bg-gray-50 rounded-lg p-4 md:p-6">
                       <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
+                        <Link 
+                          href={`/profile/${comment.user_id}`}
+                          className="flex items-center space-x-3 hover:opacity-70 transition-opacity"
+                        >
                           {comment.profiles?.avatar_url ? (
                             <Image
                               src={comment.profiles.avatar_url}
@@ -579,7 +585,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                               })}
                             </p>
                           </div>
-                        </div>
+                        </Link>
                         {user && user.id === comment.user_id && (
                           <button
                             onClick={() => handleCommentDelete(comment.id)}
