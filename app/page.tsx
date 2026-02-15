@@ -64,7 +64,7 @@ export default async function Home() {
               <div className="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-xl">✏️</span>
               </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">投稿する</h3>
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">公開する</h3>
               <p className="text-xs text-gray-500 leading-relaxed">
                 URLを共有するだけで簡単に作品を公開
               </p>
@@ -113,13 +113,13 @@ export default async function Home() {
           ) : (
             <div className="text-center py-16">
               <p className="text-gray-400 text-sm mb-4">
-                まだ作品が投稿されていません
+                まだ作品が公開されていません
               </p>
               <Link
                 href={ctaLink}
                 className="text-emerald-500 hover:text-emerald-600 text-sm font-medium"
               >
-                最初の作品を投稿する →
+                最初の作品を公開する →
               </Link>
             </div>
           )}

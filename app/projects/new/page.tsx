@@ -315,7 +315,7 @@ export default function NewProjectPage() {
       router.push(`/projects/${data.id}`)
       router.refresh()
     } catch (error: any) {
-      setError(error.message || 'プロジェクトの投稿に失敗しました')
+      setError(error.message || 'プロジェクトの公開に失敗しました')
     } finally {
       setLoading(false)
     }

@@ -244,8 +244,8 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
         setNewComment('')
       }
     } catch (error) {
-      console.error('コメントの投稿に失敗しました:', error)
-      alert('コメントの投稿に失敗しました')
+      console.error('コメントの公開に失敗しました:', error)
+      alert('コメントの公開に失敗しました')
     } finally {
       setSubmittingComment(false)
     }
@@ -503,7 +503,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 コメント ({comments.length})
               </h2>
 
-              {/* コメント投稿フォーム */}
+              {/* コメント公開フォーム */}
               {user ? (
                 <form onSubmit={handleCommentSubmit} className="mb-6">
                   <textarea
@@ -520,14 +520,14 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                       disabled={submittingComment || !newComment.trim()}
                       className="px-5 py-1.5 bg-emerald-500 text-white rounded-full text-sm font-medium hover:bg-emerald-600 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
                     >
-                      {submittingComment ? '投稿中...' : '投稿'}
+                      {submittingComment ? '公開中...' : '公開'}
                     </button>
                   </div>
                 </form>
               ) : (
                 <div className="mb-6 p-4 bg-gray-50 rounded-xl text-center">
                   <p className="text-sm text-gray-500 mb-3">
-                    コメントを投稿するにはログインが必要です
+                    コメントを公開するにはログインが必要です
                   </p>
                   <Link
                     href="/auth/login"

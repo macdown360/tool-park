@@ -70,7 +70,7 @@ export default function Navbar() {
                   href="/projects/new"
                   className="px-4 py-1.5 rounded-full bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition-colors"
                 >
-                  投稿
+                  公開
                 </Link>
                 <Link
                   href="/profile"
@@ -145,7 +145,7 @@ export default function Navbar() {
                     className="block px-3 py-2 rounded-md text-sm font-medium text-emerald-600"
                     onClick={() => setIsOpen(false)}
                   >
-                    投稿
+                    公開
                   </Link>
                   <Link
                     href="/profile"

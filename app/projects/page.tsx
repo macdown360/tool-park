@@ -118,13 +118,13 @@ export default async function ProjectsPage({
         ) : (
           <div className="text-center py-16">
             <p className="text-gray-400 text-sm mb-4">
-              まだ作品が投稿されていません
+              まだ作品が公開されていません
             </p>
             <Link
               href="/projects/new"
               className="text-emerald-500 hover:text-emerald-600 text-sm font-medium"
             >
-              最初の作品を投稿する →
+              最初の作品を公開する →
             </Link>
           </div>
         )}

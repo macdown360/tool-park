@@ -70,7 +70,7 @@ tool-park/
 │   │   └── signup/         # 新規登録ページ
 │   ├── projects/           # プロジェクト関連
 │   │   ├── [id]/          # プロジェクト詳細ページ
-│   │   ├── new/           # プロジェクト投稿ページ
+│   │   ├── new/           # プロジェクト公開ページ
 │   │   └── page.tsx       # プロジェクト一覧ページ
 │   ├── profile/           # プロフィールページ
 │   ├── layout.tsx         # ルートレイアウト
@@ -102,7 +102,7 @@ tool-park/
 - \`website\`: TEXT (ウェブサイトURL)
 
 ### projects テーブル
-投稿されたプロジェクト情報
+公開されたプロジェクト情報
 
 - \`id\`: UUID (Primary Key)
 - \`user_id\`: UUID (外部キー: profiles)
