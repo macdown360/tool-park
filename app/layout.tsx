@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "AIで作ってみた件",
   description: "AIやノーコードで作ったサイトやアプリを気軽に公開・共有できるプラットフォーム",
   icons: {
-    icon: "/favicon.svg",
+    icon: "/favicon.svg?v=20260215",
   },
 };
 
