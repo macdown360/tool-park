@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Appli Farm - アプリを育てるプラットフォーム",
-  description: "自分が作ったWEBサイトやアプリを公開して、利用者からのフィードバックを受けながら一緒に育てていくプラットフォーム",
+  title: "AIで作ってみた件",
+  description: "AIやノーコードで作ったサイトやアプリを気軽に公開・共有できるプラットフォーム",
   icons: {
     icon: "/favicon.svg",
   },
@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#f6f6f6] flex flex-col`}
       >
         <div className="flex-1">
           {children}
