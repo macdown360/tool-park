@@ -62,7 +62,7 @@ export default function Navbar() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="プロジェクトを検索..."
+                placeholder="キーワードで検索"
                 className="w-full px-4 py-1.5 pl-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               />
               <svg
@@ -151,7 +151,7 @@ export default function Navbar() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="プロジェクトを検索..."
+                  placeholder="キーワードで検索"
                   className="w-full px-4 py-2 pl-10 text-sm border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 />
                 <svg
