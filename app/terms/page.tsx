@@ -16,7 +16,7 @@ export default function TermsPage() {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-4">
             利用規約
           </h1>
-          <p className="text-gray-500 mt-2">最終更新日：2026年2月11日</p>
+          <p className="text-gray-500 mt-2">最終更新日：2026年2月15日</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-8 prose prose-sm max-w-none space-y-6">
@@ -24,7 +24,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-3">第1条 サービスの概要</h2>
             <p className="text-gray-700">
-              Appli Farm（以下「本サービス」という）は、ユーザーが開発・運営するWebアプリケーションやサービスを登録・紹介し、ユーザー間で評価・共有できるプラットフォーム（以下「本プラットフォーム」という）です。本サービスを通じて、ユーザーは自身のプロジェクト情報を登録し、他のユーザーから「水やり」（いいね）を受けることができます。
+              AIで作ってみた件（以下「本サービス」という）は、ユーザーがAIを活用して作成したWebアプリケーションやツール、サービスを登録・紹介し、ユーザー間で評価・共有できるプラットフォーム（以下「本プラットフォーム」という）です。本サービスを通じて、ユーザーは自身のプロジェクト情報を登録し、他のユーザーから「いいね」を受けることができます。
             </p>
           </section>
 
@@ -52,7 +52,7 @@ export default function TermsPage() {
             <h2 className="text-xl font-bold text-gray-900 mb-3">第3条 プロジェクト登録と管理</h2>
             <div className="space-y-3 text-gray-700">
               <p>
-                <span className="font-semibold">1.</span> ユーザーは、著作権を有するプロジェクト（Webアプリケーション、ツール、その他デジタルサービス）に限り、本プラットフォームに登録できます。
+                <span className="font-semibold">1.</span> ユーザーは、著作権を有するプロジェクト（Webアプリケーション、ツール、その他デジタルサービス）に限り、本プラットフォームに登録できます。AIを活用して作成したプロジェクトを共有することを推奨しますが、使用したAIツールについてはプロジェクト説明に明記することを推奨します。
               </p>
               <p>
                 <span className="font-semibold">2.</span> 登録されたプロジェクト情報は、他のユーザーに公開されます。
@@ -65,7 +65,7 @@ export default function TermsPage() {
               </p>
               <ul className="list-disc list-inside ml-4 space-y-2">
                 <li>違法行為又は違法行為に該当する可能性のあるコンテンツ</li>
-                <li>第三者の知的財産権を侵害するコンテンツ</li>
+                <li>第三者の知的財産権を侵害するコンテンツ（AI生成コンテンツの場合も、著作権や商標権の侵害に注意してください）</li>
                 <li>差別、ハラスメント、暴力、その他有害なコンテンツ</li>
                 <li>スパムや詐欺行為に該当するコンテンツ</li>
                 <li>他ユーザーの個人情報を無断で公開するコンテンツ</li>
@@ -186,7 +186,7 @@ export default function TermsPage() {
 
           <div className="pt-6 border-t border-gray-200 mt-8">
             <p className="text-sm text-gray-500">
-              © 2026 Appli Farm. All rights reserved.
+              © 2026 AIで作ってみた件. All rights reserved.
             </p>
           </div>
         </div>

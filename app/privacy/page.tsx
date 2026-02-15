@@ -16,7 +16,7 @@ export default function PrivacyPage() {
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mt-4">
             個人情報保護方針
           </h1>
-          <p className="text-gray-500 mt-2">最終更新日：2026年2月11日</p>
+          <p className="text-gray-500 mt-2">最終更新日：2026年2月15日</p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-8 prose prose-sm max-w-none space-y-6">
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-bold text-gray-900 mb-3">第1条 方針の目的</h2>
             <p className="text-gray-700">
-              Appli Farm（以下「運営者」という）は、本プラットフォームを利用するユーザーの個人情報の取扱いに関して、以下の方針に従い、個人情報の保護に努めます。本方針は、個人情報の保護に関する法律（以下「個人情報保護法」という）及びその他の関連法令を遵守します。
+              AIで作ってみた件（以下「運営者」という）は、本プラットフォームを利用するユーザーの個人情報の取扱いに関して、以下の方針に従い、個人情報の保護に努めます。本方針は、個人情報の保護に関する法律（以下「個人情報保護法」という）及びその他の関連法令を遵守します。
             </p>
           </section>
 
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
               <li><span className="font-semibold">ユーザープロフィール情報</span> — 氏名、自己紹介、アバター画像、Webサイト、SNSリンク（任意）</li>
               <li><span className="font-semibold">プロジェクト情報</span> — 登録されたプロジェクトのタイトル、説明、URL、画像、カテゴリ、タグ</li>
               <li><span className="font-semibold">利用ログ</span> — アクセス日時、操作履歴、IPアドレス（技術的な目的で自動取得）</li>
-              <li><span className="font-semibold">相互作用情報</span> — 「水やり」（いいね）の履歴等</li>
+              <li><span className="font-semibold">相互作用情報</span> — 「いいね」の履歴、コメント等</li>
             </ul>
           </section>
 
@@ -157,7 +157,7 @@ export default function PrivacyPage() {
 
           {/* 第10条 */}
           <section>
-            <h2 className="text-xl font-bold text-gray-900 mb-3">第10条 個人情報保護方針の变更</h2>
+            <h2 className="text-xl font-bold text-gray-900 mb-3">第10条 個人情報保護方針の変更</h2>
             <p className="text-gray-700">
               運営者は、本方針を随時変更することができます。変更後は、本プラットフォームに掲載した時点で効力が生じるものとします。重大な変更の場合は、メール通知による予告を行う場合があります。
             </p>
@@ -192,7 +192,7 @@ export default function PrivacyPage() {
 
           <div className="pt-6 border-t border-gray-200 mt-8">
             <p className="text-sm text-gray-500">
-              © 2026 Appli Farm. All rights reserved.
+              © 2026 AIで作ってみた件. All rights reserved.
             </p>
           </div>
         </div>

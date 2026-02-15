@@ -12,8 +12,8 @@ export default async function Home() {
   // ログイン状態に応じたリンク先を決定
   const ctaLink = user ? '/projects/new' : '/auth/signup'
   
-  // 最新のプロジェクトを取得
-  const { data: projects } = await supabase
+  // 最新のプロジェクトを取得（8つに増やして4カラム×2行）
+  const { data: recentProjects } = await supabase
     .from('projects')
     .select(`
       *,
@@ -23,7 +23,39 @@ export default async function Home() {
       )
     `)
     .order('created_at', { ascending: false })
-    .limit(6)
+    .limit(8)
+
+  // カテゴリ別のプロジェクトを取得
+  const categoryNames = [
+    '営業・販売管理',
+    'マーケティング支援',
+    '文書作成・編集',
+    'データ分析・可視化',
+    'eラーニング',
+    '自動化・効率化ツール',
+  ]
+
+  const categorySections = await Promise.all(
+    categoryNames.map(async (category) => {
+      const { data: projects } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          profiles:user_id (
+            full_name,
+            avatar_url
+          )
+        `)
+        .contains('categories', [category])
+        .order('created_at', { ascending: false })
+        .limit(4)
+      
+      return {
+        name: category,
+        projects: projects || []
+      }
+    })
+  )
 
   return (
     <div className="min-h-screen bg-[#f6f6f6]">
@@ -93,7 +125,7 @@ export default async function Home() {
 
       {/* Recent Projects */}
       <section className="mt-2 bg-white">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-10 md:py-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg md:text-xl font-bold text-gray-900">新着</h2>
             <Link
@@ -104,9 +136,9 @@ export default async function Home() {
             </Link>
           </div>
           
-          {projects && projects.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {projects.map((project) => (
+          {recentProjects && recentProjects.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {recentProjects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
             </div>
@@ -125,6 +157,31 @@ export default async function Home() {
           )}
         </div>
       </section>
+
+      {/* Category Sections */}
+      {categorySections.map((section) => (
+        section.projects.length > 0 && (
+          <section key={section.name} className="mt-2 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-14">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg md:text-xl font-bold text-gray-900">{section.name}</h2>
+                <Link
+                  href={`/projects?category=${encodeURIComponent(section.name)}`}
+                  className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+                >
+                  もっとみる →
+                </Link>
+              </div>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {section.projects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
+                ))}
+              </div>
+            </div>
+          </section>
+        )
+      ))}
 
       {/* CTA Section */}
       <section className="mt-2 bg-white">
