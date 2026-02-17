@@ -24,7 +24,7 @@
 6. 「**Run**」ボタン（緑色の再生ボタン）をクリックして実行
 7. ✅ 「Success. No rows returned」メッセージが表示されればOK！
 
-> ❌ `'/workspaces/tool-park/supabase/schema.sql'` とファイルパスを入力しないでください  
+> ❌ `'/workspaces/ai-tsuku/supabase/schema.sql'` とファイルパスを入力しないでください  
 > ✅ ファイルの中身（SQLコード）をコピー&ペーストしてください
 
 ### 3. Supabase Storage のセットアップ

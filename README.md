@@ -63,7 +63,7 @@ npm run dev
 ## プロジェクト構造
 
 \`\`\`
-tool-park/
+ai-tsuku/
 ├── app/                      # Next.js App Router
 │   ├── auth/                # 認証ページ
 │   │   ├── login/          # ログインページ
