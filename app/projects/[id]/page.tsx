@@ -17,6 +17,7 @@ interface Project {
   image_url: string | null
   categories: string[]
   tags: string[]
+  ai_tools: string[] | null
   likes_count: number
   created_at: string
   updated_at: string
@@ -515,6 +516,23 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                     #{tag}
                   </span>
                 ))}
+              </div>
+            )}
+
+            {/* 使用したAIツール */}
+            {project.ai_tools && project.ai_tools.length > 0 && (
+              <div className="mb-6">
+                <p className="text-xs font-medium text-gray-600 mb-2">💡 使用したAIツール</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.ai_tools.map((tool, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
 

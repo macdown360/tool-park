@@ -63,6 +63,7 @@ export interface Database {
           image_url: string | null
           categories: string[]
           tags: string[]
+          ai_tools: string[] | null
           likes_count: number
           created_at: string
           updated_at: string
@@ -76,6 +77,7 @@ export interface Database {
           image_url?: string | null
           categories?: string[]
           tags?: string[]
+          ai_tools?: string[] | null
           likes_count?: number
           created_at?: string
           updated_at?: string
@@ -89,6 +91,7 @@ export interface Database {
           image_url?: string | null
           categories?: string[]
           tags?: string[]
+          ai_tools?: string[] | null
           likes_count?: number
           created_at?: string
           updated_at?: string

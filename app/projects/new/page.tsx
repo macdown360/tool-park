@@ -114,6 +114,8 @@ const TAG_GROUPS = [
   },
 ]
 
+const AI_TOOLS = ['Gemini', 'Chat GPT', 'Cursor', 'Claude', 'Bolt', 'V0', 'Copilot', 'Perplexity', 'その他']
+
 const TITLE_MAX = 80
 const DESC_MAX = 2000
 
@@ -126,6 +128,8 @@ export default function NewProjectPage() {
   const [isDragActive, setIsDragActive] = useState(false)
   const [categories, setCategories] = useState<string[]>([])
   const [tags, setTags] = useState<string[]>([])
+  const [aiTools, setAiTools] = useState<string[]>([])
+  const [otherAiTool, setOtherAiTool] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -195,6 +199,12 @@ export default function NewProjectPage() {
     )
   }
 
+  const toggleAiTool = (value: string) => {
+    setAiTools((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    )
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -203,6 +213,18 @@ export default function NewProjectPage() {
     try {
       if (categories.length === 0) {
         setError('カテゴリを1つ以上選択してください')
+        setLoading(false)
+        return
+      }
+
+      // AIツール処理：「その他」が選択されている場合、otherAiToolを含める
+      const finalAiTools = aiTools.includes('その他')
+        ? aiTools.filter(tool => tool !== 'その他').concat(otherAiTool ? [otherAiTool] : [])
+        : aiTools
+
+      // 「その他」が選択されているのにテキストが空の場合はエラー
+      if (aiTools.includes('その他') && !otherAiTool.trim()) {
+        setError('「その他」を選択した場合、AIツール名を入力してください')
         setLoading(false)
         return
       }
@@ -291,6 +313,7 @@ export default function NewProjectPage() {
           image_url: uploadedImageUrl || null,
           categories,
           tags,
+          ai_tools: finalAiTools.length > 0 ? finalAiTools : null,
         })
         .select()
         .single()
@@ -407,7 +430,80 @@ export default function NewProjectPage() {
             </div>
           </section>
 
-          {/* ==================== セクション2: サムネイル画像 ==================== */}
+          {/* ==================== セクション2: 使用したAIツール ==================== */}
+          <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-bold text-gray-900">使用したAIツール</h2>
+              <p className="text-xs text-gray-400 mt-0.5">このプロジェクトで使用したAIツールを選択してください（任意・複数選択可）</p>
+            </div>
+            <div className="p-5">
+              {/* 選択中のAIツールバッジ */}
+              {aiTools.length > 0 && (
+                <div className="mb-4 pb-4 border-b border-gray-100">
+                  <p className="text-xs font-medium text-gray-500 mb-2">選択中（{aiTools.length}件）</p>
+                  <div className="flex flex-wrap gap-2">
+                    {aiTools.map((tool) => (
+                      <button
+                        key={tool}
+                        type="button"
+                        onClick={() => toggleAiTool(tool)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium hover:bg-red-100 hover:text-red-700 transition-colors"
+                      >
+                        {tool}
+                        <span className="text-purple-500 hover:text-red-500">✕</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* AIツール選択 */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                {AI_TOOLS.map((tool) => {
+                  const checked = aiTools.includes(tool)
+                  return (
+                    <label
+                      key={tool}
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-all text-sm ${
+                        checked
+                          ? 'border-purple-400 bg-purple-50 text-purple-800 font-medium'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-purple-300 hover:bg-purple-50/50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleAiTool(tool)}
+                        className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                      />
+                      <span>{tool}</span>
+                    </label>
+                  )
+                })}
+              </div>
+
+              {/* 「その他」選択時のテキスト入力 */}
+              {aiTools.includes('その他') && (
+                <div className="mt-4 pt-4 border-t border-gray-100">
+                  <label htmlFor="otherAiTool" className="block text-sm font-medium text-gray-700 mb-2">
+                    その他のAIツール名 <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="otherAiTool"
+                    required
+                    value={otherAiTool}
+                    onChange={(e) => setOtherAiTool(e.target.value)}
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm"
+                    placeholder="例：NotebookLM、Runway ML など"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">使用したAIツール名を入力してください</p>
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* ==================== セクション3: サムネイル画像 ==================== */}
           <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <h2 className="text-sm font-bold text-gray-900">サムネイル画像</h2>
@@ -472,7 +568,7 @@ export default function NewProjectPage() {
             </div>
           </section>
 
-          {/* ==================== セクション3: カテゴリ ==================== */}
+          {/* ==================== セクション4: カテゴリ ==================== */}
           <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <h2 className="text-sm font-bold text-gray-900">カテゴリ <span className="text-red-500 text-xs">*</span></h2>
@@ -553,7 +649,7 @@ export default function NewProjectPage() {
             </div>
           </section>
 
-          {/* ==================== セクション4: タグ ==================== */}
+          {/* ==================== セクション5: タグ ==================== */}
           <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <h2 className="text-sm font-bold text-gray-900">タグ</h2>

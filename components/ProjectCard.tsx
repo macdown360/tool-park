@@ -15,6 +15,7 @@ interface ProjectCardProps {
     image_url: string | null
     categories: string[]
     tags: string[]
+    ai_tools?: string[] | null
     likes_count: number
     created_at: string
     updated_at: string
@@ -86,6 +87,25 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   #{tag}
                 </span>
               ))}
+            </div>
+          )}
+
+          {/* 使用したAIツール */}
+          {project.ai_tools && project.ai_tools.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {project.ai_tools.slice(0, 2).map((tool, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded-full"
+                >
+                  {tool}
+                </span>
+              ))}
+              {project.ai_tools.length > 2 && (
+                <span className="px-2 py-0.5 text-xs text-gray-500 bg-gray-100 rounded-full">
+                  +{project.ai_tools.length - 2}
+                </span>
+              )}
             </div>
           )}
 
