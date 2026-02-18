@@ -64,6 +64,8 @@ export interface Database {
           categories: string[]
           tags: string[]
           ai_tools: string[] | null
+          backend_services: string[] | null
+          frontend_tools: string[] | null
           likes_count: number
           created_at: string
           updated_at: string
@@ -78,6 +80,8 @@ export interface Database {
           categories?: string[]
           tags?: string[]
           ai_tools?: string[] | null
+          backend_services?: string[] | null
+          frontend_tools?: string[] | null
           likes_count?: number
           created_at?: string
           updated_at?: string
@@ -92,6 +96,8 @@ export interface Database {
           categories?: string[]
           tags?: string[]
           ai_tools?: string[] | null
+          backend_services?: string[] | null
+          frontend_tools?: string[] | null
           likes_count?: number
           created_at?: string
           updated_at?: string

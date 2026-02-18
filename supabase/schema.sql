@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS projects (
     categories TEXT[] DEFAULT '{}',
     tags TEXT[] DEFAULT '{}',
     ai_tools TEXT[] DEFAULT '{}',
+    backend_services TEXT[] DEFAULT '{}',
+    frontend_tools TEXT[] DEFAULT '{}',
     likes_count INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

@@ -114,7 +114,11 @@ const TAG_GROUPS = [
   },
 ]
 
-const AI_TOOLS = ['Gemini', 'Chat GPT', 'Cursor', 'Claude', 'Bolt', 'V0', 'Copilot', 'Perplexity', 'その他']
+const AI_TOOLS = ['Gemini', 'Chat GPT', 'Cursor', 'Claude', 'Bolt', 'V0', 'Copilot', 'Perplexity', 'Grok', 'LLaMA', 'Mistral']
+
+const BACKEND_SERVICES = ['Supabase', 'Firebase', 'AWS', 'Heroku', 'Railway', 'Render', 'Vercel', 'PlanetScale', 'MongoDB', 'PostgreSQL', 'Node.js', 'Python']
+
+const FRONTEND_TOOLS = ['Vercel', 'Netlify', 'GitHub Pages', 'Cloudflare Pages', 'AWS Amplify', 'Firebase Hosting', 'Heroku', 'Render']
 
 const TITLE_MAX = 80
 const DESC_MAX = 2000
@@ -129,7 +133,8 @@ export default function NewProjectPage() {
   const [categories, setCategories] = useState<string[]>([])
   const [tags, setTags] = useState<string[]>([])
   const [aiTools, setAiTools] = useState<string[]>([])
-  const [otherAiTool, setOtherAiTool] = useState('')
+  const [backendServices, setBackendServices] = useState<string[]>([])
+  const [frontendTools, setFrontendTools] = useState<string[]>([])
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -205,6 +210,18 @@ export default function NewProjectPage() {
     )
   }
 
+  const toggleBackendService = (value: string) => {
+    setBackendServices((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    )
+  }
+
+  const toggleFrontendTool = (value: string) => {
+    setFrontendTools((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+    )
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -213,18 +230,6 @@ export default function NewProjectPage() {
     try {
       if (categories.length === 0) {
         setError('カテゴリを1つ以上選択してください')
-        setLoading(false)
-        return
-      }
-
-      // AIツール処理：「その他」が選択されている場合、otherAiToolを含める
-      const finalAiTools = aiTools.includes('その他')
-        ? aiTools.filter(tool => tool !== 'その他').concat(otherAiTool ? [otherAiTool] : [])
-        : aiTools
-
-      // 「その他」が選択されているのにテキストが空の場合はエラー
-      if (aiTools.includes('その他') && !otherAiTool.trim()) {
-        setError('「その他」を選択した場合、AIツール名を入力してください')
         setLoading(false)
         return
       }
@@ -313,7 +318,9 @@ export default function NewProjectPage() {
           image_url: uploadedImageUrl || null,
           categories,
           tags,
-          ai_tools: finalAiTools.length > 0 ? finalAiTools : null,
+          ai_tools: aiTools.length > 0 ? aiTools : null,
+          backend_services: backendServices.length > 0 ? backendServices : null,
+          frontend_tools: frontendTools.length > 0 ? frontendTools : null,
         })
         .select()
         .single()
@@ -481,24 +488,114 @@ export default function NewProjectPage() {
                   )
                 })}
               </div>
+            </div>
+          </section>
 
-              {/* 「その他」選択時のテキスト入力 */}
-              {aiTools.includes('その他') && (
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <label htmlFor="otherAiTool" className="block text-sm font-medium text-gray-700 mb-2">
-                    その他のAIツール名 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="otherAiTool"
-                    value={otherAiTool}
-                    onChange={(e) => setOtherAiTool(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-colors text-sm"
-                    placeholder="例：NotebookLM、Runway ML など"
-                  />
-                  <p className="text-xs text-gray-400 mt-1">使用したAIツール名を入力してください</p>
+          {/* ==================== セクション2.5: バックエンド/サービス ==================== */}
+          <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-bold text-gray-900">バックエンド/サービス</h2>
+              <p className="text-xs text-gray-400 mt-0.5">使用したバックエンドサービスを選択してください（任意・複数選択可）</p>
+            </div>
+            <div className="p-5">
+              {/* 選択中のバックエンドサービスバッジ */}
+              {backendServices.length > 0 && (
+                <div className="mb-4 pb-4 border-b border-gray-100">
+                  <p className="text-xs font-medium text-gray-500 mb-2">選択中（{backendServices.length}件）</p>
+                  <div className="flex flex-wrap gap-2">
+                    {backendServices.map((service) => (
+                      <button
+                        key={service}
+                        type="button"
+                        onClick={() => toggleBackendService(service)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium hover:bg-red-100 hover:text-red-700 transition-colors"
+                      >
+                        {service}
+                        <span className="text-blue-500 hover:text-red-500">✕</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
+
+              {/* バックエンドサービス選択 */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                {BACKEND_SERVICES.map((service) => {
+                  const checked = backendServices.includes(service)
+                  return (
+                    <label
+                      key={service}
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-all text-sm ${
+                        checked
+                          ? 'border-blue-400 bg-blue-50 text-blue-800 font-medium'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-blue-300 hover:bg-blue-50/50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleBackendService(service)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span>{service}</span>
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+          </section>
+
+          {/* ==================== セクション2.6: フロントエンドツール ==================== */}
+          <section className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <h2 className="text-sm font-bold text-gray-900">フロントエンドツール</h2>
+              <p className="text-xs text-gray-400 mt-0.5">使用したフロントエンドツール/ホスティングを選択してください（任意・複数選択可）</p>
+            </div>
+            <div className="p-5">
+              {/* 選択中のフロントエンドツールバッジ */}
+              {frontendTools.length > 0 && (
+                <div className="mb-4 pb-4 border-b border-gray-100">
+                  <p className="text-xs font-medium text-gray-500 mb-2">選択中（{frontendTools.length}件）</p>
+                  <div className="flex flex-wrap gap-2">
+                    {frontendTools.map((tool) => (
+                      <button
+                        key={tool}
+                        type="button"
+                        onClick={() => toggleFrontendTool(tool)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium hover:bg-red-100 hover:text-red-700 transition-colors"
+                      >
+                        {tool}
+                        <span className="text-green-500 hover:text-red-500">✕</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* フロントエンドツール選択 */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                {FRONTEND_TOOLS.map((tool) => {
+                  const checked = frontendTools.includes(tool)
+                  return (
+                    <label
+                      key={tool}
+                      className={`flex items-center gap-2 rounded-md border px-3 py-2 cursor-pointer transition-all text-sm ${
+                        checked
+                          ? 'border-green-400 bg-green-50 text-green-800 font-medium'
+                          : 'border-gray-200 bg-white text-gray-700 hover:border-green-300 hover:bg-green-50/50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleFrontendTool(tool)}
+                        className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                      />
+                      <span>{tool}</span>
+                    </label>
+                  )
+                })}
+              </div>
             </div>
           </section>
 
