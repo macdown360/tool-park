@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import Navbar from '@/components/Navbar'
+import ProjectCard from '@/components/ProjectCard'
 import type { User } from '@supabase/supabase-js'
 
 interface Project {
@@ -62,6 +63,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [updates, setUpdates] = useState<ProjectUpdate[]>([])
   const [newUpdate, setNewUpdate] = useState('')
   const [submittingUpdate, setSubmittingUpdate] = useState(false)
+  const [relatedProjects, setRelatedProjects] = useState<Project[]>([])
   const router = useRouter()
   const supabase = createClient()
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
@@ -139,6 +141,75 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
 
       if (updatesData) {
         setUpdates(updatesData)
+      }
+
+      // 関連プロジェクトを取得・計算
+      const { data: allProjectsData } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          profiles:user_id (
+            full_name,
+            avatar_url
+          )
+        `)
+        .neq('id', resolvedParams.id)
+
+      if (allProjectsData && allProjectsData.length > 0) {
+        // 関連性スコアを計算
+        const scoredProjects = allProjectsData.map((p: Project) => {
+          let score = 0
+
+          // カテゴリが共通していればスコア加算
+          if (projectData.categories && p.categories) {
+            const commonCategories = projectData.categories.filter((cat: string) =>
+              p.categories.includes(cat)
+            )
+            score += commonCategories.length * 3
+          }
+
+          // タグが共通していればスコア加算
+          if (projectData.tags && p.tags) {
+            const commonTags = projectData.tags.filter((tag: string) =>
+              p.tags.includes(tag)
+            )
+            score += commonTags.length * 2
+          }
+
+          // AIツールが共通していればスコア加算
+          if (projectData.ai_tools && p.ai_tools) {
+            const commonAiTools = (projectData.ai_tools || []).filter((tool: string) =>
+              (p.ai_tools || []).includes(tool)
+            )
+            score += commonAiTools.length * 2
+          }
+
+          // バックエンドサービスが共通していればスコア加算
+          if (projectData.backend_services && p.backend_services) {
+            const commonBackend = (projectData.backend_services || []).filter((service: string) =>
+              (p.backend_services || []).includes(service)
+            )
+            score += commonBackend.length * 2
+          }
+
+          // フロントエンドツールが共通していればスコア加算
+          if (projectData.frontend_tools && p.frontend_tools) {
+            const commonFrontend = (projectData.frontend_tools || []).filter((tool: string) =>
+              (p.frontend_tools || []).includes(tool)
+            )
+            score += commonFrontend.length * 2
+          }
+
+          return { ...p, relatedScore: score }
+        })
+
+        // スコアでソートして上位4～6個を選択
+        const filtered = scoredProjects
+          .filter((p: any) => p.relatedScore > 0)
+          .sort((a: any, b: any) => b.relatedScore - a.relatedScore)
+          .slice(0, 6)
+
+        setRelatedProjects(filtered as Project[])
       }
 
       setLoading(false)
@@ -812,6 +883,20 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
             </div>
+
+            {/* 関連プロジェクト */}
+            {relatedProjects.length > 0 && (
+              <div className="mt-12 pt-8 border-t border-slate-200">
+                <h2 className="text-lg md:text-xl font-bold text-slate-900 mb-6">
+                  関連するおすすめプロジェクト
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {relatedProjects.map((p) => (
+                    <ProjectCard key={p.id} project={p} />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </article>
       </div>
