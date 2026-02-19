@@ -52,7 +52,17 @@ Supabaseプロジェクトの設定から以下の情報を取得:
 - Project URL → \`NEXT_PUBLIC_SUPABASE_URL\`
 - API Keys の anon/public → \`NEXT_PUBLIC_SUPABASE_ANON_KEY\`
 
-### 4. 開発サーバーの起動
+### 4. ダミープロジェクトの追加（オプション）
+
+開発環境でテストするために、10個のダミープロジェクトを追加できます:
+
+```bash
+npm run seed:dummy
+```
+
+詳細は [DUMMY_PROJECTS_GUIDE.md](./DUMMY_PROJECTS_GUIDE.md) を参照してください。
+
+### 5. 開発サーバーの起動
 
 \`\`\`bash
 npm run dev

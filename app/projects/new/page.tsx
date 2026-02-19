@@ -114,7 +114,7 @@ const TAG_GROUPS = [
   },
 ]
 
-const AI_TOOLS = ['Gemini', 'Chat GPT', 'Cursor', 'Claude', 'Bolt', 'V0', 'Copilot', 'Perplexity', 'Grok', 'LLaMA', 'Mistral']
+const AI_TOOLS = ['Gemini', 'Chat GPT', 'Cursor', 'Claude', 'Bolt', 'V0', 'Copilot', 'Perplexity', 'Grok', 'LLaMA', 'Mistral', 'Notion', 'Airtable', 'Zapier', 'Make']
 
 const BACKEND_SERVICES = ['Supabase', 'Firebase', 'AWS', 'Heroku', 'Railway', 'Render', 'Vercel', 'PlanetScale', 'MongoDB', 'PostgreSQL', 'Node.js', 'Python']
 
