@@ -538,6 +538,40 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               </div>
             )}
 
+            {/* 使用したバックエンド/サービス */}
+            {project.backend_services && project.backend_services.length > 0 && (
+              <div className="mb-6">
+                <p className="text-xs font-medium text-gray-600 mb-2">⚙️ バックエンド/サービス</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.backend_services.map((service, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                    >
+                      {service}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 使用したフロントエンドツール */}
+            {project.frontend_tools && project.frontend_tools.length > 0 && (
+              <div className="mb-6">
+                <p className="text-xs font-medium text-gray-600 mb-2">🎨 フロントエンドツール</p>
+                <div className="flex flex-wrap gap-2">
+                  {project.frontend_tools.map((tool, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full"
+                    >
+                      {tool}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* アクションボタン */}
             <div className="flex flex-col sm:flex-row gap-3 pt-5 border-t border-gray-100">
               <a

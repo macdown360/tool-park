@@ -94,8 +94,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
           {/* 使用したAIツール */}
           {project.ai_tools && project.ai_tools.length > 0 && (
-            <div className="flex flex-wrap gap-1 mb-3">
-              {project.ai_tools.slice(0, 2).map((tool, index) => (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {project.ai_tools.slice(0, 1).map((tool, index) => (
                 <span
                   key={index}
                   className="px-2 py-0.5 text-xs bg-purple-100 text-purple-700 rounded-full"
@@ -103,9 +103,47 @@ export default function ProjectCard({ project }: ProjectCardProps) {
                   {tool}
                 </span>
               ))}
-              {project.ai_tools.length > 2 && (
+              {project.ai_tools.length > 1 && (
                 <span className="px-2 py-0.5 text-xs text-gray-500 bg-gray-100 rounded-full">
-                  +{project.ai_tools.length - 2}
+                  +{project.ai_tools.length - 1}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* 使用したバックエンド/サービス */}
+          {project.backend_services && project.backend_services.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-2">
+              {project.backend_services.slice(0, 1).map((service, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full"
+                >
+                  {service}
+                </span>
+              ))}
+              {project.backend_services.length > 1 && (
+                <span className="px-2 py-0.5 text-xs text-gray-500 bg-gray-100 rounded-full">
+                  +{project.backend_services.length - 1}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* 使用したフロントエンドツール */}
+          {project.frontend_tools && project.frontend_tools.length > 0 && (
+            <div className="flex flex-wrap gap-1 mb-3">
+              {project.frontend_tools.slice(0, 1).map((tool, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 text-xs bg-green-100 text-green-700 rounded-full"
+                >
+                  {tool}
+                </span>
+              ))}
+              {project.frontend_tools.length > 1 && (
+                <span className="px-2 py-0.5 text-xs text-gray-500 bg-gray-100 rounded-full">
+                  +{project.frontend_tools.length - 1}
                 </span>
               )}
             </div>
