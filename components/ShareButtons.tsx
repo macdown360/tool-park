@@ -23,7 +23,7 @@ export default function ShareButtons({ title, description, url, imageUrl }: Shar
   }
 
   const shareOnX = () => {
-    const text = encodeURIComponent(`${title}\n\n${description.substring(0, 100)}...`)
+    const text = encodeURIComponent(`${title}\n\n${description.substring(0, 100)}...\n\n#AIツク #AIで作ってみた件`)
     const xUrl = `https://x.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`
     window.open(xUrl, '_blank', 'width=550,height=420')
   }
