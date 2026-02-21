@@ -55,23 +55,6 @@ export default function SignupPage() {
         throw error
       }
 
-      // ユーザーが作成された場合、プロフィールも確実に作成
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .upsert({
-            id: data.user.id,
-            email: data.user.email!,
-            full_name: fullName,
-          }, {
-            onConflict: 'id'
-          })
-
-        if (profileError) {
-          console.error('Profile creation error:', profileError)
-        }
-      }
-
       setSuccessMessage('確認メールを送信しました。メールからのリンクを確認してください。')
       setEmail('')
       setPassword('')
