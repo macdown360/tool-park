@@ -28,12 +28,27 @@ export default function UpdatePasswordPage() {
   }
 
   useEffect(() => {
-    // URLハッシュにトークンがあるか確認
+    // URLハッシュまたはクエリにトークンがあるか確認
     const hash = window.location.hash.substring(1)
-    if (!hash) {
+    const searchParams = new URLSearchParams(window.location.search)
+    const code = searchParams.get('code')
+
+    if (!hash && !code) {
       setTokenValid(false)
+      return
     }
-  }, [])
+
+    if (code) {
+      const exchangeCode = async () => {
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        if (error) {
+          setTokenValid(false)
+        }
+      }
+
+      exchangeCode()
+    }
+  }, [supabase])
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault()
