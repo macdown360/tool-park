@@ -46,7 +46,14 @@ export default function SignupPage() {
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('Signup error details:', {
+          code: error.status,
+          message: error.message,
+          status: error,
+        })
+        throw error
+      }
 
       // ユーザーが作成された場合、プロフィールも確実に作成
       if (data.user) {

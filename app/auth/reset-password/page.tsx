@@ -33,7 +33,10 @@ export default function ResetPasswordPage() {
         redirectTo: `${window.location.origin}/auth/update-password`,
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('パスワードリセットエラー:', error.message)
+        throw error
+      }
 
       setSuccessMessage(
         `パスワードリセット用のメールを ${email} に送信しました。メール内のリンクをクリックして、新しいパスワードを設定してください。（メールは15分以内に届きます）`
