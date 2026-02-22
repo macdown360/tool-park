@@ -41,8 +41,6 @@ Crawl-delay: 0.5
 # リクエストレート制限（秒単位）
 Request-rate: 1 second
 
-# Sitemap - 環境に応じて設定
-# 本番環境: https://your-domain.com/sitemap.xml
-# 開発環境: http://localhost:3000/sitemap.xml
-# Sitemap: https://NEXT_PUBLIC_BASE_URL/sitemap.xml
+# Sitemap
+Sitemap: https://www.ai-tsuku.com/sitemap.xml
 
